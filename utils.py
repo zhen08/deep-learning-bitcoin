@@ -1,4 +1,5 @@
 import matplotlib
+import copy
 matplotlib.use('Agg')
 
 def compute_returns(p):
@@ -9,13 +10,14 @@ def compute_returns(p):
 
 def plot_p(df):
     import matplotlib.pyplot as plt
-    from matplotlib.finance import candlestick2_ohlc
+    import mpl_finance
     fig, ax = plt.subplots()
-    candlestick2_ohlc(ax,
-                      df['price_open'].values,
-                      df['price_high'].values,
-                      df['price_low'].values,
-                      df['price_close'].values,
+    df_nor = normalize(df)
+    mpl_finance.candlestick2_ohlc(ax,
+                      opens=df_nor['price_open'].values,
+                      highs=df_nor['price_high'].values,
+                      lows=df_nor['price_low'].values,
+                      close=df_nor['price_close'].values,
                       width=0.6,
                       colorup='g',
                       colordown='r',
@@ -23,16 +25,25 @@ def plot_p(df):
     plt.show()
     print('Done.')
 
+def normalize(df):
+    result = df.copy()
+    max_value = df['price_high'].max()
+    min_value = df['price_low'].min()
+    for feature_name in df.columns:
+        result[feature_name] = (df[feature_name] - min_value) / (max_value - min_value)
+    return result
 
 def save_to_file(df, filename):
     import matplotlib.pyplot as plt
-    from matplotlib.finance import candlestick2_ohlc
+    import mpl_finance
     fig, ax = plt.subplots()
-    candlestick2_ohlc(ax,
-                      df['price_open'].values,
-                      df['price_high'].values,
-                      df['price_low'].values,
-                      df['price_close'].values,
+    
+    df_nor = normalize(df)
+    mpl_finance.candlestick2_ohlc(ax,
+                      opens=df_nor['price_open'].values,
+                      highs=df_nor['price_high'].values,
+                      lows=df_nor['price_low'].values,
+                      close=df_nor['price_close'].values,
                       width=0.6,
                       colorup='g',
                       colordown='r',

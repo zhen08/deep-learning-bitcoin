@@ -21,5 +21,5 @@ def file_processor(data_file):
     # So we have NaN buckets of 5Min in this particular hour.
     # Our convention is to avoid those NaN values and drop them!
     p = p.dropna()
-    p.to_csv('/tmp/bitcoin_coinbase_M5.csv', sep='\t')
+    p.to_csv('data/bitcoin_coinbase_M5.csv', sep='\t')
     return p
