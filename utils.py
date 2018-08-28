@@ -1,7 +1,5 @@
 import matplotlib
 import copy
-import mpl_finance
-import matplotlib.pyplot as plt
 
 matplotlib.use('Agg')
 
@@ -37,6 +35,7 @@ def normalize(df):
     return result
 
 def draw_candle(df,ax):
+    import mpl_finance
     ax.axis('off')
     df_nor = normalize(df)
     mpl_finance.candlestick2_ohlc(ax,
@@ -51,7 +50,8 @@ def draw_candle(df,ax):
 
 
 def save_to_file(df1, df2, df3, df4, filename):
-    
+    import matplotlib.pyplot as plt
+
     fig, ax = plt.subplots(nrows=2, ncols=2)
 
     draw_candle(df1, ax[0,0])
