@@ -33,22 +33,60 @@ def normalize(df):
         result[feature_name] = (df[feature_name] - min_value) / (max_value - min_value)
     return result
 
-def save_to_file(df, filename):
+def save_to_file(df1, df2, df3, df4, filename):
     import matplotlib.pyplot as plt
     import mpl_finance
-    fig, ax = plt.subplots()
     
-    df_nor = normalize(df)
-    mpl_finance.candlestick2_ohlc(ax,
+    fig, ax = plt.subplots(nrows=2, ncols=2)
+    ax[0,0].axis('off')
+    ax[0,1].axis('off')
+    ax[1,0].axis('off')
+    ax[1,1].axis('off')
+
+    df_nor = normalize(df1)
+    mpl_finance.candlestick2_ohlc(ax[0,0],
                       opens=df_nor['price_open'].values,
                       highs=df_nor['price_high'].values,
                       lows=df_nor['price_low'].values,
                       closes=df_nor['price_close'].values,
-                      width=0.6,
+                      width=1.0,
                       colorup='g',
                       colordown='r',
                       alpha=1)
-    plt.savefig(filename)
+
+    df_nor = normalize(df2)
+    mpl_finance.candlestick2_ohlc(ax[0,1],
+                      opens=df_nor['price_open'].values,
+                      highs=df_nor['price_high'].values,
+                      lows=df_nor['price_low'].values,
+                      closes=df_nor['price_close'].values,
+                      width=1.0,
+                      colorup='g',
+                      colordown='r',
+                      alpha=1)
+
+    df_nor = normalize(df3)
+    mpl_finance.candlestick2_ohlc(ax[1,0],
+                      opens=df_nor['price_open'].values,
+                      highs=df_nor['price_high'].values,
+                      lows=df_nor['price_low'].values,
+                      closes=df_nor['price_close'].values,
+                      width=1.0,
+                      colorup='g',
+                      colordown='r',
+                      alpha=1)
+
+    df_nor = normalize(df4)
+    mpl_finance.candlestick2_ohlc(ax[1,1],
+                      opens=df_nor['price_open'].values,
+                      highs=df_nor['price_high'].values,
+                      lows=df_nor['price_low'].values,
+                      closes=df_nor['price_close'].values,
+                      width=1.0,
+                      colorup='g',
+                      colordown='r',
+                      alpha=1)
+    plt.savefig(filename, bbox_inches='tight')
     plt.close(fig)
 
 
