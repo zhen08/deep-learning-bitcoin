@@ -26,32 +26,24 @@ def generate_up_down(data_folder, bitcoin_file):
     def get_price_direction(btc_df, btc_slice, i):
         # last_price = btc_slice[-2:-1]['price_close'].values[0] #this is actually the second last price
         last_price = btc_slice[-1:]['price_close'].values[0] #one option to get the correct last price
-        # last_price = btc_df[i + slice_size - 1:i + slice_size]['price_close'].values[0] #another option to get the correct last price
+
         next_slice_prices = btc_df[i:i + slice_size_12hours]
-        #print(next_slice_prices)
-        maxPrice = next_slice_prices['price_close'].values.max()
-        #print("Max Price {0}",maxPrice)
-        minPrice = next_slice_prices['price_close'].values.min()
-        #print("Min Price {0}",minPrice)
-        
-        if maxPrice > last_price:
-            increase_percent = 100*((maxPrice-last_price)/last_price)
-        else:
-            increase_percent = 0
-
-        if minPrice < last_price:
-            decrease_percent = 100*((last_price-minPrice)/last_price)
-        else:
-            decrease_percent = 0
-
-#        next_price = btc_df[i + slice_size:i + slice_size + 1]['price_close'].values[0]
-        if (increase_percent >= 2.5) & (increase_percent > decrease_percent):
-            class_name = "LONG"
-        elif  (decrease_percent > increase_percent) & (decrease_percent >= 2.5):   
-            class_name = "SHORT"
-        else:
-            class_name = 'HOLD'
-        return class_name
+        for index, row in next_slice_prices.iterrows():
+            maxPrice = max([row['price_close'],row['price_open']])
+            if maxPrice > last_price:
+                increase_percent = 100*((maxPrice-last_price)/last_price)
+            else:
+                increase_percent = 0
+            minPrice = min([row['price_close'],row['price_open']])
+            if minPrice < last_price:
+                decrease_percent = 100*((last_price-minPrice)/last_price)
+            else:
+                decrease_percent = 0
+            if (increase_percent >= 2.5) & (increase_percent > decrease_percent):
+                return "LONG"
+            elif (decrease_percent >= 2.5) & (decrease_percent > increase_percent):   
+                return "SHORT"
+        return 'HOLD'
 
     return generate_cnn_dataset(data_folder, bitcoin_file, get_price_direction)
 
