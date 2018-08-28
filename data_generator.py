@@ -52,9 +52,9 @@ def generate_up_down(data_folder, bitcoin_file):
             decrease_percent = 0
 
 #        next_price = btc_df[i + slice_size:i + slice_size + 1]['price_close'].values[0]
-        if (increase_percent >= 3.0) & (increase_percent > decrease_percent):
+        if (increase_percent >= 2.5) & (increase_percent > decrease_percent):
             class_name = "LONG"
-        elif  (decrease_percent > increase_percent) & (decrease_percent >= 3.0):   
+        elif  (decrease_percent > increase_percent) & (decrease_percent >= 2.5):   
             class_name = "SHORT"
         else:
             class_name = 'HOLD'
