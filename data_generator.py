@@ -3,6 +3,7 @@ import shutil
 import sys
 from time import time
 from uuid import uuid4
+from multiprocessing import Process
 
 import numpy as np
 import pandas as pd
@@ -104,7 +105,7 @@ def generate_cnn_dataset(data_folder, bitcoin_file, get_class_name):
         print('epoch = {0}, time = {1:.3f}, filename = {2}'.format(str(epoch).zfill(8), time() - st, filename))
 
 
-def main():
+def main(arg):
     #args = sys.argv
     data_folder = "data"
     bitcoin_file = "data/coinbaseUSD.csv"
@@ -115,4 +116,12 @@ def main():
     print("Finished")
 
 if __name__ == '__main__':
-    main()
+    procs = []
+ 
+    for index, number in enumerate(range(8)):
+        proc = Process(target=main, args=(number,))
+        procs.append(proc)
+        proc.start()
+ 
+    for proc in procs:
+        proc.join()
