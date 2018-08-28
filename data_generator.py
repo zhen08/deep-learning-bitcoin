@@ -22,14 +22,6 @@ slice_size_12hours = 144
 slice_size_2days = 576
 slice_size_1week = 2016
 
-def generate_quantiles(data_folder, bitcoin_file):
-    def get_label(btc_df, btc_slice, i, slice_size):
-        class_name = str(btc_df[i + slice_size:i + slice_size + 1]['close_price_returns_labels'].values[0])
-        return class_name
-
-    return generate_cnn_dataset(data_folder, bitcoin_file, get_label)
-
-
 def generate_up_down(data_folder, bitcoin_file):
     def get_price_direction(btc_df, btc_slice, i):
         # last_price = btc_slice[-2:-1]['price_close'].values[0] #this is actually the second last price
@@ -106,22 +98,26 @@ def generate_cnn_dataset(data_folder, bitcoin_file, get_class_name):
 
 
 def main(arg):
-    #args = sys.argv
     data_folder = "data"
     bitcoin_file = "data/coinbaseUSD.csv"
-    use_quantiles = 0
 
-    data_gen_func = generate_quantiles if use_quantiles else generate_up_down
-    data_gen_func(data_folder, bitcoin_file)
+    generate_up_down(data_folder, bitcoin_file)
     print("Finished")
 
 if __name__ == '__main__':
-    procs = []
+    args = sys.argv
+    if len(args) == 1:
+        main(1)
+    else:
+        number_of_processes = args[1]
+        print('Start {} processes.'.format(number_of_processes))
+        procs = []
+        for index, number in enumerate(range(int(number_of_processes))):
+            proc = Process(target=main, args=(number,))
+            procs.append(proc)
+            proc.start()
  
-    for index, number in enumerate(range(8)):
-        proc = Process(target=main, args=(number,))
-        procs.append(proc)
-        proc.start()
+        for proc in procs:
+            proc.join()
  
-    for proc in procs:
-        proc.join()
+ 
