@@ -24,10 +24,9 @@ slice_size_1week = 2016
 
 def generate_up_down(data_folder, bitcoin_file):
     def get_price_direction(btc_df, btc_slice, i):
-        # last_price = btc_slice[-2:-1]['price_close'].values[0] #this is actually the second last price
         last_price = btc_slice[-1:]['price_close'].values[0] #one option to get the correct last price
 
-        next_slice_prices = btc_df[i:i + slice_size_12hours]
+        next_slice_prices = btc_df[i:i + slice_size_4hours]
         for index, row in next_slice_prices.iterrows():
             maxPrice = max([row['price_close'],row['price_open']])
             if maxPrice > last_price:
@@ -78,7 +77,7 @@ def generate_cnn_dataset(data_folder, bitcoin_file, get_class_name):
 
         class_name = get_class_name(btc_df, btc_slice_4hours, i)
         save_dir = os.path.join(data_folder, 'train', class_name)
-        if epoch % test_every_steps == 0:
+        if i>(n-(slice_size_1week*12)):
             save_dir = os.path.join(data_folder, 'test', class_name)
         mkdir_p(save_dir)
         fid = uuid4()
