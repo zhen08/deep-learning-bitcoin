@@ -38,9 +38,9 @@ def generate_up_down(data_folder, bitcoin_file):
                 decrease_percent = 100*((last_price-minPrice)/last_price)
             else:
                 decrease_percent = 0
-            if (increase_percent >= 2.5) & (increase_percent > decrease_percent):
+            if (increase_percent >= 2.0) & (increase_percent > decrease_percent):
                 return "LONG"
-            elif (decrease_percent >= 2.5) & (decrease_percent > increase_percent):   
+            elif (decrease_percent >= 2.0) & (decrease_percent > increase_percent):   
                 return "SHORT"
         return 'HOLD'
 
@@ -49,33 +49,23 @@ def generate_up_down(data_folder, bitcoin_file):
 
 def generate_cnn_dataset(data_folder, bitcoin_file, get_class_name):
     btc_df = file_processor(bitcoin_file)
-#    btc_df, levels = add_returns_in_place(btc_df)
 
-#    print('-' * 80)
-#    print('Those values should be roughly equal to 1/len(levels):')
-#    for ii in range(len(levels)):
-#        print(ii, np.mean((btc_df['close_price_returns_labels'] == ii).values))
-#    print(levels)
-#    print('-' * 80)
-
-    test_every_steps = 10
     n = len(btc_df) - slice_size_1week
 
-    #shutil.rmtree(data_folder, ignore_errors=True)
-    for epoch in range(int(1e5)):
+    for epoch in range(int(1e4)):
         st = time()
 
-        i = np.random.choice(n) + slice_size_1week
+        i = np.random.choice(n) + slice_size_12hours
 
-        btc_slice_4hours = btc_df[i-slice_size_4hours:i]
+        #btc_slice_4hours = btc_df[i-slice_size_4hours:i]
         btc_slice_12hours = btc_df[i-slice_size_12hours:i]
-        btc_slice_2days = btc_df[i-slice_size_2days:i]
-        btc_slice_1week = btc_df[i-slice_size_1week:i]
+        #btc_slice_2days = btc_df[i-slice_size_2days:i]
+        #btc_slice_1week = btc_df[i-slice_size_1week:i]
 
-        if btc_slice_1week.isnull().values.any():
+        if btc_slice_12hours.isnull().values.any():
             raise Exception('NaN values detected. Please remove them.')
 
-        class_name = get_class_name(btc_df, btc_slice_4hours, i)
+        class_name = get_class_name(btc_df, btc_slice_12hours, i)
         save_dir = os.path.join(data_folder, 'train', class_name)
         if i>(n-(slice_size_1week*12)):
             save_dir = os.path.join(data_folder, 'test', class_name)
@@ -83,7 +73,7 @@ def generate_cnn_dataset(data_folder, bitcoin_file, get_class_name):
         fid = uuid4()
         filename = save_dir + '/' + str(fid) + '.png'
         #filenamen = save_dir + '/' + str(fid) + 'n.png'
-        save_to_file(btc_slice_4hours, btc_slice_12hours, btc_slice_2days, btc_slice_1week, filename=filename)
+        save_to_file(btc_slice_12hours, filename=filename)
         #save_to_file(btc_df[i:i + slice_size+slice_size], filename=filenamen)
         print('epoch = {0}, time = {1:.3f}, filename = {2}'.format(str(epoch).zfill(8), time() - st, filename))
 

@@ -37,7 +37,7 @@ def normalize(df):
 def draw_candle(df,ax):
     import mpl_finance
     ax.axis('off')
-    df_nor = normalize(df)
+    df_nor = df #normalize(df)
     mpl_finance.candlestick2_ohlc(ax,
                       opens=df_nor['price_open'].values,
                       highs=df_nor['price_high'].values,
@@ -49,15 +49,16 @@ def draw_candle(df,ax):
                       alpha=1)
 
 
-def save_to_file(df1, df2, df3, df4, filename):
+def save_to_file(df1, filename):
     import matplotlib.pyplot as plt
 
-    fig, ax = plt.subplots(nrows=2, ncols=2)
+    fig, ax = plt.subplots(nrows=1, ncols=1)
 
-    draw_candle(df1, ax[0,0])
-    draw_candle(df2, ax[0,1])
-    draw_candle(df3, ax[1,0])
-    draw_candle(df4, ax[1,1])
+    draw_candle(df1,ax)
+    #draw_candle(df1, ax[0,0])
+    #draw_candle(df2, ax[0,1])
+    #draw_candle(df3, ax[1,0])
+    #draw_candle(df4, ax[1,1])
 
     plt.savefig(filename, bbox_inches='tight')
     plt.close(fig)
